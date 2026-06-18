@@ -203,7 +203,7 @@
 
         </div>
 
-        {{-- PRODUTOS --}}
+        {{-- CARDAPIO --}}
 
         <div class="row">
 

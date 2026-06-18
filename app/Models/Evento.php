@@ -8,24 +8,34 @@ class Evento extends Model
 {
     protected $fillable = [
 
-    'reserva_id',
-    'cliente',
-    'telefone',
-    'tipo_evento',
-    'data_evento',
-    'convidados',
-    'valor',
-    'descricao',
-    'observacoes',
-    'status'
-    
+        'reserva_id',
+        'cliente',
+        'telefone',
+        'tipo_evento',
+        'data_evento',
+        'convidados',
+        'valor',
+        'descricao',
+        'observacoes',
+        'status'
+
     ];
 
-    
-    public function reserva()
+     protected $casts = [
+
+        'data_evento' => 'date',
+        'valor' => 'decimal:2',
+        'convidados' => 'integer'
+
+    ];
+
+     public function reserva()
     {
-        //return $this->belongsTo(Reserva::class,'reserva_id');
-        return $this->belongsTo(Reserva::class);
+        return $this->belongsTo(
+            Reserva::class
+        );
     }
+
+    
     
 }

@@ -12,8 +12,8 @@ class Categoria extends Model
 
     ];
 
-    public function produtos()
+    public function cardapios()
     {
-        return $this->hasMany(Produto::class);
+        return $this->hasMany(Cardapio::class);
     }
 }

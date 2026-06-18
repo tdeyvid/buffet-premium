@@ -8,6 +8,7 @@ class Reserva extends Model
 {
     protected $table = 'reservas';
 
+
     protected $fillable = [
         'user_id',
         'cliente',
@@ -19,15 +20,21 @@ class Reserva extends Model
         'status'
     ];
 
+
+
     public function evento()
     {
-        //return $this->hasOne(Evento::class,'reserva_id');
-        return $this->hasOne(Evento::class);
+        return $this->hasOne(
+            Evento::class,
+            'reserva_id'
+        );
     }
+
 
     public function user()
     {
-        return $this->belongsTo(User::class);
-        
+        return $this->belongsTo(
+            User::class
+        );
     }
 }

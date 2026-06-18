@@ -73,7 +73,6 @@ if (grafico) {
 
             labels: [
 
-                'Produtos',
                 'Categorias',
                 'Reservas',
                 'Galeria'
@@ -85,8 +84,6 @@ if (grafico) {
                 label: 'Sistema',
 
                 data: [
-
-                    window.totalProdutos || 0,
                     window.totalCategorias || 0,
                     window.totalReservas || 0,
                     window.totalGaleria || 0

@@ -92,7 +92,7 @@
 
                                     <td>
 
-                                        {{ \Carbon\Carbon::parse($evento->data_evento)->format('d/m/Y') }}
+                                        {{ $evento->data_evento->format('d/m/Y') }}
 
                                     </td>
 

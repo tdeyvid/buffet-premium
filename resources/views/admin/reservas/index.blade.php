@@ -245,21 +245,21 @@
 
                                                     <select name="status" class="form-select form-select-sm">
 
-                                                        <option value="Pendente"
+                                                        <option value="pendente"
                                                             {{ $status == 'pendente' ? 'selected' : '' }}>
 
                                                             Pendente
 
                                                         </option>
 
-                                                        <option value="Analise"
+                                                        <option value="analise"
                                                             {{ $status == 'analise' ? 'selected' : '' }}>
 
                                                             Em Análise
 
                                                         </option>
 
-                                                        <option value="Cancelada"
+                                                        <option value="cancelada"
                                                             {{ $status == 'cancelada' ? 'selected' : '' }}>
 
                                                             Cancelada

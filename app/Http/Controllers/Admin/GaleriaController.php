@@ -157,15 +157,11 @@ class GaleriaController extends Controller
     public function destroy(Galeria $galeria)
     {
 
-
         $galeria->delete();
-
-
 
         return back()->with(
 
             'success',
-
             'Imagem removida com sucesso.'
 
         );

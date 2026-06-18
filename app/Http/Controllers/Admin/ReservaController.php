@@ -6,13 +6,16 @@ use App\Http\Controllers\Controller;
 use App\Models\Reserva;
 use App\Models\Evento;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 
 class ReservaController extends Controller
 {
+
     public function index()
     {
         $reservas = Reserva::with('evento')
-            ->latest()->paginate(10);
+            ->latest()
+            ->paginate(10);
 
         return view(
             'admin.reservas.index',
@@ -23,8 +26,14 @@ class ReservaController extends Controller
 
     public function show(Reserva $reserva)
     {
-        return view('admin.reservas.show', compact('reserva'));
+        $reserva->load('evento');
+
+        return view(
+            'admin.reservas.show',
+            compact('reserva')
+        );
     }
+
 
 
     public function destroy(Reserva $reserva)
@@ -41,91 +50,147 @@ class ReservaController extends Controller
                 );
         } catch (\Exception $e) {
 
-            return redirect()
-                ->route('admin.reservas.index')
+            return back()
                 ->with(
                     'error',
-                    'Não foi possível remover a reserva.'
+                    'Erro ao remover reserva.'
                 );
         }
     }
 
+
+
+
+
     public function aprovar(Reserva $reserva)
     {
-        if ($reserva->evento) {
 
-            return back()->with(
-                'warning',
-                'Esta reserva já possui um evento.'
-            );
+        try {
+
+            DB::transaction(function () use ($reserva) {
+
+
+                if ($reserva->evento) {
+
+                    throw new \Exception(
+                        'Já existe evento criado.'
+                    );
+                }
+
+
+                $reserva->update([
+
+                    'status' => 'confirmada'
+
+                ]);
+
+
+
+                Evento::create([
+
+                    'reserva_id' => $reserva->id,
+
+                    'cliente' => $reserva->cliente,
+
+                    'telefone' => $reserva->telefone,
+
+                    'tipo_evento' => $reserva->tipo_evento,
+
+                    'data_evento' => $reserva->data_reserva,
+
+                    'convidados' => $reserva->quantidade_pessoas,
+
+                    'descricao' => $reserva->mensagem,
+
+                    'valor' => 0,
+
+                    'status' => 'confirmado'
+
+                ]);
+            });
+
+
+
+            return back()
+                ->with(
+                    'success',
+                    'Reserva aprovada e evento criado.'
+                );
+        } catch (\Exception $e) {
+
+
+            return back()
+                ->with(
+                    'error',
+                    $e->getMessage()
+                );
         }
-
-        $reserva->update([
-            'status' => 'confirmada'
-        ]);
-
-        Evento::create([
-
-            'reserva_id' => $reserva->id,
-            'cliente' => $reserva->cliente,
-            'telefone' => $reserva->telefone,
-            'tipo_evento' => $reserva->tipo_evento,
-            'data_evento' => $reserva->data_reserva,
-            'convidados' => $reserva->quantidade_pessoas,
-            'descricao' => $reserva->mensagem,
-            'valor' => 0,
-            'status' => 'confirmado'
-
-        ]);
-
-
-        return back()->with(
-            'success',
-            'Reserva aprovada e evento criado.'
-        );
     }
+
+
+
 
 
     public function rejeitar(Reserva $reserva)
     {
-        $reserva->update([
-            'status' => 'cancelada'
-        ]);
 
-        return back()->with(
-            'success',
-            'Reserva rejeitada.'
-        );
+        try {
+
+
+            $reserva->update([
+
+                'status' => 'cancelada'
+
+            ]);
+
+
+            return back()
+                ->with(
+                    'success',
+                    'Reserva cancelada.'
+                );
+        } catch (\Exception $e) {
+
+            return back()
+                ->with(
+                    'error',
+                    'Erro ao cancelar reserva.'
+                );
+        }
     }
 
     public function alterarStatus(Request $request, $id)
     {
         $request->validate([
-            'status' => 'required|in:Pendente,Analise,Cancelada'
+
+            'status' => 'required|in:pendente,analise,confirmada,cancelada'
+
         ]);
+
 
         try {
 
             $reserva = Reserva::findOrFail($id);
 
+
             $reserva->update([
-                'status' => strtolower($request->status)
+
+                'status' => $request->status
+
             ]);
 
-            return redirect()
-                ->back()
-                ->with(
-                    'success',
-                    'Status atualizado com sucesso.'
-                );
+
+            return back()->with(
+                'success',
+                'Status atualizado com sucesso.'
+            );
         } catch (\Exception $e) {
 
-            return redirect()
-                ->back()
-                ->with(
-                    'error',
-                    'Não foi possível atualizar o status.'
-                );
+
+            return back()->with(
+                'error',
+                'Não foi possível atualizar o status.'
+            );
         }
     }
 }

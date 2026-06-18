@@ -32,24 +32,7 @@
 
 </div>
 
-{{-- ERROS --}}
-@if ($errors->any())
 
-    <div class="alert alert-danger rounded-4">
-
-        <ul class="mb-0">
-
-            @foreach ($errors->all() as $error)
-
-                <li>{{ $error }}</li>
-
-            @endforeach
-
-        </ul>
-
-    </div>
-
-@endif
 
 {{-- FORMULÁRIO --}}
 <div class="glass rounded-5 p-4 shadow">
@@ -162,7 +145,7 @@
                     <input
                         type="date"
                         name="data_evento"
-                        value="{{ old('data_evento', $evento->data_evento) }}"
+                        value="{{ old('data_evento', \Carbon\Carbon::parse($evento->data_evento)->format('Y-m-d')) }}"
                         class="form-control bg-dark text-white border-secondary rounded-4">
 
                 </div>

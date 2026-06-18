@@ -99,7 +99,7 @@ Atualização do status
 
 ## Recursos do Admin
 
-### Produtos / Cardápio
+### Cardápio
 
 Gerenciamento:
 
@@ -317,8 +317,6 @@ Acessar: http://127.0.0.1:8000
 
 ```
 /admin/dashboard
-
-/admin/produtos
 
 /admin/categorias
 

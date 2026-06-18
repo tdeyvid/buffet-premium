@@ -5,12 +5,14 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Models\Categoria;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 
 class CategoriaController extends Controller
 {
+
     public function index()
     {
-        //$categorias = Categoria::latest()->paginate(10);
+
         $categorias = Categoria::orderBy('nome')
             ->paginate(10);
 
@@ -18,124 +20,142 @@ class CategoriaController extends Controller
             'admin.categorias.index',
             compact('categorias')
         );
+
     }
+
+
+
 
     public function create()
     {
-        return view('admin.categorias.create');
+
+        return view(
+            'admin.categorias.create'
+        );
+
     }
 
     public function store(Request $request)
     {
-        $request->validate(
 
-            [
-                'nome' => 'required|max:255|unique:categorias,nome'
-            ],
+        $dados = $request->validate([
 
-            [
-                'nome.required' => 'O nome da categoria é obrigatório.',
-                'nome.unique' => 'Já existe uma categoria com esse nome.',
-                'nome.max' => 'O nome deve ter no máximo 255 caracteres.'
-            ]
+            'nome'=>'required|max:255|unique:categorias,nome'
 
-        );
+        ],
+        [
 
-        Categoria::create([
-
-            'nome' => $request->nome
+            'nome.required'=>'O nome da categoria é obrigatório.',
+            'nome.unique'=>'Já existe uma categoria com esse nome.',
+            'nome.max'=>'Máximo de 255 caracteres.'
 
         ]);
 
-        return redirect()
+        try {
+            Categoria::create($dados);
+            return redirect()
             ->route('admin.categorias.index')
             ->with(
                 'success',
                 'Categoria criada com sucesso.'
             );
-    }
 
+        }catch(\Exception $e){
+
+            return back()
+            ->with(
+                'error',
+                'Erro ao criar categoria.'
+            );
+
+        }
+
+
+    }
 
     public function edit(Categoria $categoria)
     {
+
         return view(
             'admin.categorias.edit',
             compact('categoria')
         );
+
     }
 
 
-    public function update(
-        Request $request,
-        Categoria $categoria
-    ) {
-        $request->validate(
+    public function update(Request $request,Categoria $categoria)
+    {
+        $dados = $request->validate([
+            'nome'=>
+            'required|max:255|unique:categorias,nome,'.
+            $categoria->id
 
-            [
-                'nome' =>
-                'required|max:255|unique:categorias,nome,' .
-                    $categoria->id
-            ],
+        ],
+        [
 
-            [
-                'nome.required' =>
-                'O nome da categoria é obrigatório.',
-
-                'nome.unique' =>
-                'Já existe uma categoria com esse nome.',
-
-                'nome.max' =>
-                'O nome deve ter no máximo 255 caracteres.'
-            ]
-
-        );
-
-
-        $categoria->update([
-
-            'nome' => $request->nome
+            'nome.required'=>'Informe o nome.',
+            'nome.unique'=>'Categoria já existe.'
 
         ]);
-
-
-        return redirect()
+        try{
+            $categoria->update($dados);
+            return redirect()
             ->route('admin.categorias.index')
             ->with(
                 'success',
-                'Categoria atualizada com sucesso.'
+                'Categoria atualizada.'
             );
+
+
+
+        }catch(\Exception $e){
+            return back()
+            ->with(
+                'error',
+                'Erro ao atualizar categoria.'
+            );
+
+        }
+
     }
 
     public function destroy(Categoria $categoria)
     {
-        if ($categoria->produtos()->count() > 0) {
+        try{
 
-            return redirect()
+            if($categoria->cardapios()->exists()){
+
+                return redirect()
                 ->route('admin.categorias.index')
                 ->with(
                     'error',
-                    'Não é possível excluir esta categoria porque existem produtos vinculados.'
+                    'Não pode excluir. Existem pratos vinculados a esta categoria.'
                 );
-        }
 
-        try {
-
+            }
             $categoria->delete();
 
             return redirect()
-                ->route('admin.categorias.index')
-                ->with(
-                    'success',
-                    'Categoria removida com sucesso.'
-                );
-        } catch (\Exception $e) {
+            ->route('admin.categorias.index')
+            ->with(
+                'success',
+                'Categoria removida.'
+            );
+
+        }catch(\Exception $e){
 
             return redirect()
-                ->route('admin.categorias.index')
-                ->with(
-                    'error',
-                    'Não foi possível remover a categoria.'
-                );
+            ->route('admin.categorias.index')
+            ->with(
+                'error',
+                'Erro ao remover categoria.'
+            );
+
         }
+
+
     }
+
+
 }

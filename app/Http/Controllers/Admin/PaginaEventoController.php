@@ -32,7 +32,6 @@ class PaginaEventoController extends Controller
 
         $pagina = PaginaEvento::first();
 
-
         $dados = $request->validate([
 
             'titulo' => 'nullable|string',

@@ -4,7 +4,6 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\Cardapio;
-use App\Models\Produto;
 use App\Models\Categoria;
 use App\Models\Reserva;
 use App\Models\Evento;

@@ -2,11 +2,12 @@
 
 namespace App\Http\Controllers\Admin;
 
-
 use App\Http\Controllers\Controller;
 use App\Models\Cardapio;
 use App\Models\Categoria;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
+use Exception;
 
 
 class CardapioController extends Controller
@@ -16,254 +17,189 @@ class CardapioController extends Controller
     {
 
         $query = Cardapio::with('categoria');
-
-        if($request->busca){
-
+        if ($request->filled('busca')) {
             $query->where(
                 'nome',
                 'like',
-                '%'.$request->busca.'%'
+                "%{$request->busca}%"
             );
-
         }
 
-        if($request->categoria){
-
+        if ($request->filled('categoria')) {
             $query->where(
                 'categoria_id',
                 $request->categoria
             );
-
         }
 
-
-
-        $cardapios = $query->paginate(12);
-
-
-
-        $totalCardapios = Cardapio::count();
-
-
-        $totalCategorias = Categoria::count();
-
-
-        $precoMedio = Cardapio::avg('preco');
-
-
-        $categorias = Categoria::all();
-
+        $cardapios = $query
+            ->latest()
+            ->paginate(12)
+            ->withQueryString();
 
 
         return view(
             'admin.cardapios.index',
-            compact(
-                'cardapios',
-                'totalCardapios',
-                'totalCategorias',
-                'precoMedio',
-                'categorias'
-            )
+            [
+                'cardapios' => $cardapios,
+                'totalCardapios' => Cardapio::count(),
+                'totalCategorias' => Categoria::count(),
+                'precoMedio' => Cardapio::avg('preco') ?? 0,
+                'categorias' => Categoria::orderBy('nome')->get()
+
+            ]
         );
-
-
     }
-
-
-
-
-
 
 
     public function create()
     {
 
-
-        $categorias = Categoria::all();
-
-
         return view(
             'admin.cardapios.create',
-            compact('categorias')
+            [
+                'categorias' => Categoria::orderBy('nome')->get()
+            ]
         );
-
-
     }
-
-
-
-
-
-
-
-
 
     public function store(Request $request)
     {
 
+        try {
 
-        $dados = $request->validate([
+            $dados = $request->validate([
 
+                'nome' => 'required',
+                'categoria_id' => 'required|exists:categorias,id',
+                'descricao' => 'nullable',
+                'preco' => 'required|numeric',
+                'imagem' => 'nullable|image|max:4096'
 
-            'nome'=>'required',
-            'categoria_id'=>'required',
-            'descricao'=>'nullable',
-            'preco'=>'required',
-            'imagem'=>'nullable|image|max:4096'
-
-
-        ]);
-
+            ]);
 
 
+            if ($request->hasFile('imagem')) {
+                $imagem = $request->file('imagem');
 
-        if($request->hasFile('imagem')){
-
-
-            $imagem = $request->file('imagem');
-
-
-            $dados['imagem'] =
-            'data:image/'.$imagem->extension().
-            ';base64,'.
-            base64_encode(
-                file_get_contents($imagem)
-            );
+                $dados['imagem'] =
+                    'data:image/' . $imagem->extension() .
+                    ';base64,' .
+                    base64_encode(
+                        file_get_contents($imagem)
+                    );
+            }
 
 
+            Cardapio::create($dados);
+
+            return redirect()
+                ->route('admin.cardapios.index')
+                ->with(
+                    'success',
+                    'Prato cadastrado!'
+                );
+        } catch (\Exception $e) {
+
+            return back()
+                ->with(
+                    'error',
+                    'Erro ao cadastrar prato.'
+                );
         }
-
-
-
-
-
-        Cardapio::create($dados);
-
-
-
-        return redirect()
-        ->route('admin.cardapios.index')
-        ->with('success','Prato cadastrado!');
-
-
     }
-
-
-
-
-
-
-
 
 
     public function edit(Cardapio $cardapio)
     {
 
-
-        $categorias = Categoria::all();
-
-
-
         return view(
             'admin.cardapios.edit',
-            compact(
-                'cardapio',
-                'categorias'
-            )
+
+            [
+                'cardapio' => $cardapio,
+                'categorias' => Categoria::orderBy('nome')->get()
+
+            ]
+
         );
-
-
     }
 
 
 
 
 
-
-
-
-
-    public function update(
-        Request $request,
-        Cardapio $cardapio
-    )
+    public function update(Request $request, Cardapio $cardapio)
     {
 
+        try {
+
+            $dados = $request->validate([
+
+                'nome' => 'required|string|max:255',
+                'categoria_id' => 'required|exists:categorias,id',
+                'descricao' => 'nullable|string',
+                'preco' => 'required|numeric|min:0',
+                'imagem' => 'nullable|image|max:4096'
 
 
-        $dados = $request->validate([
+            ]);
 
+            if ($request->hasFile('imagem')) {
+                $dados['imagem'] =
+                    $this->imagemBase64(
+                        $request->file('imagem')
+                    );
+            }
 
-            'nome'=>'required',
-            'categoria_id'=>'required',
-            'descricao'=>'nullable',
-            'preco'=>'required',
-            'imagem'=>'nullable|image|max:4096'
+            $cardapio->update($dados);
+            return redirect()
 
+                ->route('admin.cardapios.index')
+                ->with(
+                    'success',
+                    'Prato atualizado com sucesso!'
+                );
+        } catch (Exception $e) {
+            return back()
 
-        ]);
-
-
-
-
-
-
-
-        if($request->hasFile('imagem')){
-
-
-            $imagem = $request->file('imagem');
-
-
-            $dados['imagem'] =
-            'data:image/'.$imagem->extension().
-            ';base64,'.
-            base64_encode(
-                file_get_contents($imagem)
-            );
-
-
+                ->withInput()
+                ->with(
+                    'error',
+                    'Erro ao atualizar prato.'
+                );
         }
-
-
-
-
-
-
-        $cardapio->update($dados);
-
-
-
-
-        return redirect()
-        ->route('admin.cardapios.index')
-        ->with('success','Prato atualizado!');
-
-
     }
-
-
-
-
-
-
-
 
 
     public function destroy(Cardapio $cardapio)
     {
+        try {
+            $cardapio->delete();
+            return redirect()
+                ->route('admin.cardapios.index')
 
+                ->with(
+                    'success',
+                    'Prato removido!'
+                );
+        } catch (Exception $e) {
 
-        $cardapio->delete();
+            return back()
 
-
-
-        return redirect()
-        ->route('admin.cardapios.index')
-        ->with('success','Prato removido!');
-
-
+                ->with(
+                    'error',
+                    'Não foi possível remover.'
+                );
+        }
     }
 
-
+    private function imagemBase64($imagem)
+    {
+        return 'data:image/' . $imagem->extension() .
+            ';base64,' .
+            base64_encode(
+                file_get_contents($imagem)
+            );
+    }
 }

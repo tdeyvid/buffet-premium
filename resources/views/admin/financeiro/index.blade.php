@@ -104,7 +104,7 @@
 
         </div>
 
-        {{-- PRODUTOS --}}
+        {{-- CARDAPIO --}}
         <div class="col-lg-3 col-md-6">
 
             <div class="glass rounded-5 p-4 shadow h-100">

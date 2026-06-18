@@ -15,17 +15,14 @@ return new class extends Migration
             $table->foreignId('reserva_id')
                 ->nullable()
                 ->constrained()
-                ->nullOnDelete();
+                ->cascadeOnDelete();
 
             $table->string('cliente');
-
             $table->string('telefone')
                 ->nullable();
 
             $table->string('tipo_evento');
-
             $table->date('data_evento');
-
             $table->integer('convidados');
 
             $table->decimal('valor', 10, 2)
