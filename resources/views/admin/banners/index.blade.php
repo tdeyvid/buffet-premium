@@ -20,7 +20,7 @@
 
                 <div class="glass rounded-5 overflow-hidden">
 
-                    <img src="https://images.unsplash.com/photo-1517248135467-4c7edcad34c4" class="img-fluid">
+                    <img src="{{ asset('storage/buffet.jpg') }}" class="img-fluid">
 
                     <div class="p-4">
 

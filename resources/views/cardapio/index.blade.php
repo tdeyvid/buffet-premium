@@ -42,24 +42,18 @@
 
                         <div class="service-card h-100 overflow-hidden">
 
-
                             {{-- IMAGEM --}}
                             <div class="mb-4">
 
-
                                 @if ($cardapio->imagem)
-                                    <img src="{{ $cardapio->imagem }}" class="w-100 rounded-4"
+                                    <img src="{{ asset('storage/' . $cardapio->imagem) }}" class="w-100 rounded-4"
                                         style="height:250px; object-fit:cover;" alt="{{ $cardapio->nome }}">
                                 @else
-                                    <img src="https://images.unsplash.com/photo-1544025162-d76694265947"
-                                        class="w-100 rounded-4" style="height:250px; object-fit:cover;" alt="Sem imagem">
+                                    <img src="{{ asset('images/sem-imagem.jpg') }}" class="w-100 rounded-4"
+                                        style="height:250px; object-fit:cover;" alt="Sem imagem">
                                 @endif
 
-
                             </div>
-
-
-
 
                             {{-- CONTEÚDO --}}
 

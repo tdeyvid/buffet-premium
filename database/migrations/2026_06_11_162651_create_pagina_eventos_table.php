@@ -4,6 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
+
 return new class extends Migration
 {
     public function up(): void
@@ -48,11 +49,10 @@ return new class extends Migration
             $table->string('galeria_titulo')->nullable();
             $table->text('galeria_descricao')->nullable();
 
-
-            $table->longText('foto1')->nullable();
-            $table->longText('foto2')->nullable();
-            $table->longText('foto3')->nullable();
-            $table->longText('foto4')->nullable();
+            $table->string('foto1')->nullable();
+            $table->string('foto2')->nullable();
+            $table->string('foto3')->nullable();
+            $table->string('foto4')->nullable();
 
             /*
             |--------------------------------------------------------------------------
@@ -84,14 +84,5 @@ return new class extends Migration
     public function down(): void
     {
         Schema::dropIfExists('pagina_eventos');
-        
-        Schema::table('pagina_eventos', function (Blueprint $table) {
-
-            $table->string('foto1')->nullable()->change();
-            $table->string('foto2')->nullable()->change();
-            $table->string('foto3')->nullable()->change();
-            $table->string('foto4')->nullable()->change();
-
-        });
     }
 };

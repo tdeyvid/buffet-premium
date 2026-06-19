@@ -8,9 +8,9 @@ class Cardapio extends Model
 {
     protected $fillable = [
         'nome',
+        'categoria_id',
         'descricao',
         'preco',
-        'categoria_id',
         'imagem'
     ];
 

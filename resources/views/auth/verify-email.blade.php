@@ -7,8 +7,7 @@
     {{-- BACKGROUND --}}
     <div class="position-absolute top-0 inset-s-0 w-100 h-100">
 
-        <img
-            src="https://images.unsplash.com/photo-1466978913421-dad2ebd01d17?q=80&w=1800"
+     <img src="{{ asset('storage/buffet.jpg') }}"
             class="w-100 h-100"
             style="object-fit:cover; filter:brightness(0.25);">
 

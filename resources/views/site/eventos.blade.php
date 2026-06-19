@@ -28,7 +28,7 @@
 
                         <div class="produto-card h-100">
 
-                            <img src="https://images.unsplash.com/photo-1511795409834-ef04bbd61622" class="produto-img">
+                            <img src="{{ asset('storage/buffet.jpg') }}" class="produto-img">
 
                             <div class="p-4">
 

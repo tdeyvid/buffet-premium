@@ -180,11 +180,6 @@
                             </div>
 
 
-
-
-
-
-
                             <div class="mb-3">
 
 
@@ -199,12 +194,6 @@
 
 
                             </div>
-
-
-
-
-
-
 
                             <div class="mb-3">
 
@@ -223,22 +212,13 @@
                             </div>
 
 
-
-
-
                         </div>
 
 
 
                     </div>
 
-
-
-
-
                     <hr class="border-secondary">
-
-
 
                     <button class="btn btn-warning rounded-pill px-5">
 
@@ -251,22 +231,13 @@
                     </button>
 
 
-
-
-
                 </form>
-
-
-
 
 
             </div>
 
 
         </div>
-
-
-
 
     </div>
 

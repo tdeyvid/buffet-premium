@@ -215,13 +215,11 @@
                         <div class="position-relative">
 
                             @if ($cardapio->imagem)
-                                <img src="{{ $cardapio->imagem }}" class="card-img-top img-card">
+                                <img src="{{ asset('storage/' . $cardapio->imagem) }}" class="w-100 rounded-4"
+                                    style="height:250px;object-fit:cover" alt="{{ $cardapio->nome }}">
                             @else
-                                <div class="bg-secondary text-center p-5">
-
-                                    <i class="fas fa-image fa-3x"></i>
-
-                                </div>
+                                <img src="{{ asset('images/sem-imagem.jpg') }}" class="w-100 rounded-4"
+                                    style="height:250px;object-fit:cover" alt="Sem imagem">
                             @endif
 
                             <span class="position-absolute top-0 end m-3 badge bg-warning text-dark">
@@ -268,7 +266,7 @@
 
                                 <button onclick="confirmarExclusao(event, this.form)"
                                     class="btn btn-outline-danger btn-sm rounded-pill w-100">
-                                     <i class="fas fa-trash"></i>
+                                    <i class="fas fa-trash"></i>
                                     Excluir
                                 </button>
                             </form>

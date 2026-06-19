@@ -68,7 +68,7 @@
 
 
                             @if ($cardapio->imagem)
-                                <img src="{{ $cardapio->imagem }}" id="preview"
+                                <img src="{{ asset('storage/'.$cardapio->imagem) }}" id="preview"
                                     class="img-fluid rounded mb-3" style="height:250px;object-fit:cover;">
                             @else
                                 <img id="preview" class="img-fluid rounded mb-3 d-none"

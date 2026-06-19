@@ -5,20 +5,19 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Models\PaginaEvento;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Storage;
+use Exception;
 
 class PaginaEventoController extends Controller
 {
 
     public function index()
     {
-        $pagina = PaginaEvento::first();
-
-        if (!$pagina) {
-
-            $pagina = PaginaEvento::create([
-                'titulo' => 'Eventos Inesquecíveis'
-            ]);
-        }
+        $pagina = PaginaEvento::firstOrCreate([
+            'id' => 1
+        ], [
+            'titulo' => 'Eventos Inesquecíveis'
+        ]);
 
 
         return view(
@@ -29,50 +28,43 @@ class PaginaEventoController extends Controller
 
     public function update(Request $request)
     {
+        try {
 
-        $pagina = PaginaEvento::first();
+            $pagina = PaginaEvento::firstOrCreate(
+                ['id' => 1],
+                ['titulo' => 'Eventos Inesquecíveis']
+            );
 
-        $dados = $request->validate([
+            $dados = $request->validate([
+                'titulo' => 'nullable|string',
+                'subtitulo' => 'nullable|string',
 
-            'titulo' => 'nullable|string',
-            'subtitulo' => 'nullable|string',
+                'foto1' => 'nullable|image|max:4096',
+                'foto2' => 'nullable|image|max:4096',
+                'foto3' => 'nullable|image|max:4096',
+                'foto4' => 'nullable|image|max:4096',
+            ]);
 
-            'foto1' => 'nullable|image|max:1024',
-            'foto2' => 'nullable|image|max:1024',
-            'foto3' => 'nullable|image|max:1024',
-            'foto4' => 'nullable|image|max:1024',
+            for ($i = 1; $i <= 4; $i++) {
 
-        ]);
+                $campo = 'foto' . $i;
 
-        for ($i = 1; $i <= 4; $i++) {
+                if ($request->hasFile($campo)) {
 
-            $campo = 'foto' . $i;
+                    if ($pagina->$campo && Storage::disk('public')->exists($pagina->$campo)) {
+                        Storage::disk('public')->delete($pagina->$campo);
+                    }
 
-            if ($request->hasFile($campo)) {
-
-                $imagem = $request->file($campo);
-
-                // reduz qualidade usando PHP GD se existir
-                $conteudo = file_get_contents(
-                    $imagem->getRealPath()
-                );
-
-
-                $dados[$campo] =
-
-                    'data:' .
-                    $imagem->getMimeType() .
-                    ';base64,' .
-
-                    base64_encode($conteudo);
+                    $dados[$campo] = $request->file($campo)->store('eventos', 'public');
+                }
             }
+
+            $pagina->update($dados);
+
+            return back()->with('success', 'Página atualizada com sucesso.');
+        } catch (Exception $e) {
+
+            return back()->with('error', 'Erro ao salvar imagens.');
         }
-
-        $pagina->update($dados);
-
-        return back()->with(
-            'success',
-            'Página atualizada com sucesso.'
-        );
     }
 }

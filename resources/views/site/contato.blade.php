@@ -3,7 +3,7 @@
 @section('content')
 
 {{-- HERO --}}
-<section class="py-5 text-center text-white" style="background: linear-gradient(rgba(0,0,0,.7), rgba(0,0,0,.7)), url('/images/banner.jfif'); background-size: cover; background-position: center;">
+<section class="py-5 text-center text-white" style="background: linear-gradient(rgba(0,0,0,.7), rgba(0,0,0,.7)), url('/images/banner.jpg'); background-size: cover; background-position: center;">
 
     <div class="container py-5">
 

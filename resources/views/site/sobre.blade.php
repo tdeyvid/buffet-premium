@@ -4,7 +4,7 @@
 
 {{-- HERO --}}
 <section class="text-center text-white py-5"
-         style="background: linear-gradient(rgba(0,0,0,.75), rgba(0,0,0,.75)), url('/images/banner.jfif'); background-size: cover; background-position: center;">
+         style="background: linear-gradient(rgba(0,0,0,.75), rgba(0,0,0,.75)), url('/images/banner.jpg'); background-size: cover; background-position: center;">
 
     <div class="container py-5">
         <h1 class="display-4 fw-bold mb-3">
